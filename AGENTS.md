@@ -65,3 +65,35 @@ kubectl apply -f k8s_basic/
 - 운영 환경에 `kubectl apply -f .` 같은 광역 명령 지양
 - 테스트되지 않은 변경을 한 번에 대량 반영 금지
 - Secret 평문 커밋 금지 (필요 시 External Secrets, sealed-secrets 등 사용)
+
+## 8) 현재 예제 리소스 현황 (2026-03-10 기준)
+현재 `k8s_basic/` 디렉터리에 있는 매니페스트 기준 리소스 목록:
+
+- `k8s_basic/pod_basic/nginx_pod.yml`
+  - `Pod/my-nginx` (`namespace: jhm-dev`)
+- `k8s_basic/pod_basic/nginx_pod_busybox.yml`
+  - `Pod/my-nginx2` (`namespace: jhm-dev`, 2개 컨테이너: `nginx`, `http-pinger`)
+- `k8s_basic/pod_basic/nginx_service.yml`
+  - `Service/my-service` (`namespace: jhm-dev`, selector: `app=my-nginx`)
+
+- `k8s_basic/multi_pod/nginx_deployment.yml`
+  - `Deployment/nginx-deployment` (`namespace: jhm-dev`)
+  - `Service/nginx-service` (`namespace: jhm-dev`)
+- `k8s_basic/multi_pod/nginx_replicaset.yml`
+  - `ReplicaSet/nginx-replicaset` (`namespace: jhm-dev`)
+  - `Service/nginx-service` (`namespace: jhm-dev`)
+- `k8s_basic/multi_pod/ingress_nginx.yml`
+  - `Ingress/nginx-ingress` (`namespace: jhm-dev`, host: `server.jhm-dev.click`)
+
+참고:
+- 일부 예제 파일명(`*_pod.yml`)은 기존 학습 파일명을 유지 중입니다.
+- 운영 적용 전에는 4) 검증 명령의 `dry-run`/`diff`를 우선 실행합니다.
+
+## 9) 실습 진행 상태 요약
+- `pod_basic`
+  - 단일 Pod 생성 및 Service 연결 실습 완료
+  - Multi-container Pod(sidecar 형태: `nginx` + `http-pinger`) 실습 완료
+- `multi_pod`
+  - Deployment 기반 다중 Pod 관리 및 Service 라우팅 실습 완료
+  - ReplicaSet 기반 다중 Pod 관리 실습 파일 보유
+  - Ingress(host/path 기반 라우팅) 실습 파일 보유
