@@ -41,12 +41,12 @@ jobs:
         run: |
           docker build \
           -t $REGISTRY/$REPOSITORY:$IMAGE_TAG \
-          -f ./3.msa/apigateway/Dockerfile ./3.msa/apigateway
+          -f ./msa/apigateway/Dockerfile ./msa/apigateway
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
 
       - name: eks kubectl apply
         run: |
-          kubectl apply -f ./3.msa/apigateway/k8s/depl_svc.yml
+          kubectl apply -f ./msa/apigateway/k8s/depl_svc.yml
           kubectl rollout restart deployment apigateway-depl -n bradkim
 
       - name: member build and push docker image to ecr
@@ -57,12 +57,12 @@ jobs:
         run: |
           docker build \
           -t $REGISTRY/$REPOSITORY:$IMAGE_TAG \
-          -f ./3.msa/member/Dockerfile ./3.msa/member
+          -f ./msa/member/Dockerfile ./msa/member
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
 
       - name: eks kubectl apply
         run: |
-          kubectl apply -f ./3.msa/member/k8s/depl_svc.yml
+          kubectl apply -f ./msa/member/k8s/depl_svc.yml
           kubectl rollout restart deployment member-depl -n bradkim
 
       - name: order build and push docker image to ecr
@@ -73,12 +73,12 @@ jobs:
         run: |
           docker build \
           -t $REGISTRY/$REPOSITORY:$IMAGE_TAG \
-          -f ./3.msa/ordering/Dockerfile ./3.msa/ordering
+          -f ./msa/ordering/Dockerfile ./msa/ordering
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
 
       - name: eks kubectl apply
         run: |
-          kubectl apply -f ./3.msa/ordering/k8s/depl_svc.yml
+          kubectl apply -f ./msa/ordering/k8s/depl_svc.yml
           kubectl rollout restart deployment ordering-depl -n bradkim
 
       - name: product build and push docker image to ecr
@@ -89,10 +89,10 @@ jobs:
         run: |
           docker build \
           -t $REGISTRY/$REPOSITORY:$IMAGE_TAG \
-          -f ./3.msa/product/Dockerfile ./3.msa/product
+          -f ./msa/product/Dockerfile ./msa/product
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
 
       - name: eks kubectl apply
         run: |
-          kubectl apply -f ./3.msa/product/k8s/depl_svc.yml
+          kubectl apply -f ./msa/product/k8s/depl_svc.yml
           kubectl rollout restart deployment product-depl -n bradkim

@@ -3,7 +3,7 @@ name: deploy order order-backend
 on:
   push:
     branches:
-      - dev
+      - main
 
 jobs:
   build-and-deploy:
@@ -34,16 +34,16 @@ jobs:
 
       - name: build and push docker image to ecr
         env:
-          REGISTRY: 346903264902.dkr.ecr.ap-northeast-2.amazonaws.com
+          REGISTRY: 266735817173.dkr.ecr.ap-northeast-2.amazonaws.com
           REPOSITORY: order-backend
           IMAGE_TAG: latest
         run: |
           docker build \
           -t $REGISTRY/$REPOSITORY:$IMAGE_TAG \
-          -f ./2.ordersystem/Dockerfile ./2.ordersystem
+          -f ./ordersystrem/Dockerfile ./ordersystrem
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
 
       - name: eks kubectl apply
         run: |
           kubectl rollout restart deployment ordersystem-backend -n jhm-dev
-        # kubectl apply -f ./2.ordersystem/k8s/k8s-ordersystem/depl_svc.yml
+        # kubectl apply -f ./ordersystrem/k8s/k8s-ordersystem/depl_svc.yml 같이수정되면 넣어야함
