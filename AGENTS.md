@@ -66,16 +66,16 @@ kubectl apply -f k8s_basic/
 - 테스트되지 않은 변경을 한 번에 대량 반영 금지
 - Secret 평문 커밋 금지 (필요 시 External Secrets, sealed-secrets 등 사용)
 
-## 8) 현재 예제 리소스 현황 (2026-03-10 기준)
-현재 `k8s_basic/` 디렉터리에 있는 매니페스트 기준 리소스 목록:
+## 8) 현재 매니페스트 리소스 현황 (2026-03-12 기준)
+현재 저장소의 Kubernetes 매니페스트(`k8s_basic/`, `ordersystrem/k8s/`, `msa/k8s/`, `msa/*/k8s/`) 기준 리소스 목록:
 
+### `k8s_basic/`
 - `k8s_basic/pod_basic/nginx_pod.yml`
   - `Pod/my-nginx` (`namespace: jhm-dev`)
 - `k8s_basic/pod_basic/nginx_pod_busybox.yml`
   - `Pod/my-nginx2` (`namespace: jhm-dev`, 2개 컨테이너: `nginx`, `http-pinger`)
 - `k8s_basic/pod_basic/nginx_service.yml`
-  - `Service/my-service` (`namespace: jhm-dev`, selector: `app=my-nginx`)
-
+  - `Service/my-service` (`namespace: jhm-dev`)
 - `k8s_basic/multi_pod/nginx_deployment.yml`
   - `Deployment/nginx-deployment` (`namespace: jhm-dev`)
   - `Service/nginx-service` (`namespace: jhm-dev`)
@@ -85,7 +85,82 @@ kubectl apply -f k8s_basic/
 - `k8s_basic/multi_pod/ingress_nginx.yml`
   - `Ingress/nginx-ingress` (`namespace: jhm-dev`, host: `server.jhm-dev.click`)
 
+### `ordersystrem/k8s/k8s-ordersystem/`
+- `depl_svc.yml`
+  - `Deployment/ordersystem-backend` (`namespace: jhm-dev`)
+  - `Service/ordersystem-backend-service` (`namespace: jhm-dev`)
+- `hpa.yml`
+  - `HorizontalPodAutoscaler/ordersystem-backend-hpa` (`namespace: bradkim`)
+- `ingress.yml`
+  - `Ingress/order-backend-ingress` (`namespace: jhm-dev`, host: `server.jhm-dev.click`)
+- `https.yml`
+  - `ClusterIssuer/my-issuer`
+  - `Certificate/server-jhm-click-tls` (`namespace: jhm-dev`)
+- `redis.yml`
+  - `Deployment/redis` (`namespace: jhm-dev`)
+  - `Service/redis-service` (`namespace: jhm-dev`)
+
+### `ordersystrem/k8s/k8s-argocd/`
+- `argocd-application.yaml`
+  - `Application/order-backend` (`namespace: argocd`)
+- `argocd-service.yml`
+  - `Service/argocd-server` (`namespace: argocd`)
+- `argocd-ingress.yml`
+  - `Ingress/argocd-server-ingress` (`namespace: argocd`, host: `argo.bradkim197.shop`)
+- `https.yml`
+  - `Certificate/argo-bradkim197-com-tls` (`namespace: argocd`)
+
+### `ordersystrem/k8s/k8s-monitoring/`
+- `prometheus-config.yml`
+  - `ConfigMap/prometheus-config` (`namespace: monitoring`)
+- `prometheus-rbac.yml`
+  - `ClusterRole/prometheus`
+  - `ServiceAccount/prometheus` (`namespace: monitoring`)
+  - `ClusterRoleBinding/prometheus`
+- `prometheus-depl_svc.yml`
+  - `Deployment/prometheus` (`namespace: monitoring`)
+  - `Service/prometheus-service` (`namespace: monitoring`)
+- `grafana-depl_svc.yml`
+  - `Deployment/grafana` (`namespace: monitoring`)
+  - `Service/grafana` (`namespace: monitoring`)
+- `node_exporter.yml`
+  - `DaemonSet/node-exporter` (`namespace: monitoring`)
+
+### `msa/k8s/`
+- `redis.yml`
+  - `Deployment/redis` (`namespace: bradkim`)
+  - `Service/redis-service` (`namespace: bradkim`)
+- `zookeeper.yml`
+  - `Deployment/zookeeper` (`namespace: bradkim`)
+  - `Service/zookeeper-service` (`namespace: bradkim`)
+- `kafka.yml`
+  - `Deployment/kafka` (`namespace: bradkim`)
+  - `Service/kafka-service` (`namespace: bradkim`)
+- `ingress.yml`
+  - `Ingress/order-backend-ingress` (`namespace: bradkim`, host: `server.bradkim197.shop`)
+- `ingress_without_gateway.yml`
+  - `Ingress/order-backend-ingress` (`namespace: bradkim`, host: `server.bradkim198.shop`)
+- `https.yml`
+  - `ClusterIssuer/my-issuer`
+  - `Certificate/server-bradkim197-com-tls` (`namespace: bradkim`)
+
+### `msa/*/k8s/`
+- `msa/apigateway/k8s/depl_svc.yml`
+  - `Deployment/apigateway-depl` (`namespace: bradkim`)
+  - `Service/apigateway-service` (`namespace: bradkim`)
+- `msa/member/k8s/depl_svc.yml`
+  - `Deployment/member-depl` (`namespace: bradkim`)
+  - `Service/member-service` (`namespace: bradkim`)
+- `msa/product/k8s/depl_svc.yml`
+  - `Deployment/product-depl` (`namespace: bradkim`)
+  - `Service/product-service` (`namespace: bradkim`)
+- `msa/ordering/k8s/depl_svc.yml`
+  - `Deployment/ordering-depl` (`namespace: bradkim`)
+  - `Service/ordering-service` (`namespace: bradkim`)
+
 참고:
+- `ClusterIssuer`, `ClusterRole`, `ClusterRoleBinding`은 cluster-scoped 리소스입니다.
+- 일부 매니페스트에서 `ClusterIssuer`에 `metadata.namespace`가 포함되어 있으나, cluster-scoped 리소스 특성상 적용 시 무시됩니다.
 - 일부 예제 파일명(`*_pod.yml`)은 기존 학습 파일명을 유지 중입니다.
 - 운영 적용 전에는 4) 검증 명령의 `dry-run`/`diff`를 우선 실행합니다.
 
