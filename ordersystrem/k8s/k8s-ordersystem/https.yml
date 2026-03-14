@@ -27,8 +27,8 @@ metadata:
 spec:
 # cert-manager가 아래 secretName에서 지정한 이름으로 Secret을 생성
   secretName: server-jhm-click-tls
-  duration: 2160h #90day
-  renewBefore: 360h #before 15day
+  duration: 2160h0m0s #90day
+  renewBefore: 360h0m0s #before 15day
   issuerRef:
   # ClusterIssuer의 이름을 참조
     name: my-issuer

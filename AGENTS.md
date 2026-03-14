@@ -172,3 +172,36 @@ kubectl apply -f k8s_basic/
   - Deployment 기반 다중 Pod 관리 및 Service 라우팅 실습 완료
   - ReplicaSet 기반 다중 Pod 관리 실습 파일 보유
   - Ingress(host/path 기반 라우팅) 실습 파일 보유
+
+## 10) 최근 이슈/수정 요약 (2026-03-15)
+### Argo CD ApplicationSet Controller CrashLoopBackOff
+- 증상
+  - `argocd/argocd-applicationset-controller-*` Pod가 `0/1 CrashLoopBackOff` 반복
+- 직접 원인
+  - `applicationsets.argoproj.io` CRD 누락
+  - 로그 핵심: `no matches for kind "ApplicationSet" in version "argoproj.io/v1alpha1"`
+- 확인 명령
+```bash
+kubectl get crd applicationsets.argoproj.io
+kubectl logs -n argocd <applicationset-controller-pod> --previous
+kubectl get events -n argocd --sort-by=.metadata.creationTimestamp | tail -n 30
+```
+- 복구 명령(버전 고정 권장)
+```bash
+kubectl apply -k "https://github.com/argoproj/argo-cd/manifests/crds?ref=v3.3.3"
+kubectl rollout restart deployment/argocd-applicationset-controller -n argocd
+kubectl rollout status deployment/argocd-applicationset-controller -n argocd
+kubectl get pods -n argocd
+```
+- 참고
+  - `https://raw.githubusercontent.com/argoproj/argo-cd/v3.3.3/manifests/crds/install.yaml` 경로는 404 발생 가능
+  - 이 경우 `-k .../manifests/crds?ref=v3.3.3` 방식 사용
+
+### 스케줄링 경고 분리 해석
+- `FailedScheduling: Too many pods` / `untolerated taint`는 초기 스케줄 지연 원인
+- 컨테이너 기동 후 반복 종료(BackOff)와는 별개로 분리 분석 필요
+
+### Argo CD Application 경로 주의사항
+- 파일: `ordersystrem/k8s/k8s-argocd/argocd-application.yaml`
+- `apiVersion: argoproj.io/v1alpha1`, `kind: Application` 자체는 정상
+- `spec.source.path`는 실제 저장소 경로(`ordersystrem/...`)와 일치해야 함

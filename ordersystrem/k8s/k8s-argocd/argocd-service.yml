@@ -10,3 +10,5 @@ spec:
     targetPort: 8080  # 실제 argocd-server Pod의 포트
   selector:
     app.kubernetes.io/name: argocd-server
+
+ # 443   설정 자체가 삭제되면 문제가 되기때문에 직접   insecure  설정 하고 해당  yaml  사용 X
