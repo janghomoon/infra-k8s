@@ -170,8 +170,27 @@ kubectl apply -f k8s_basic/
   - Multi-container Pod(sidecar 형태: `nginx` + `http-pinger`) 실습 완료
 - `multi_pod`
   - Deployment 기반 다중 Pod 관리 및 Service 라우팅 실습 완료
-  - ReplicaSet 기반 다중 Pod 관리 실습 파일 보유
-  - Ingress(host/path 기반 라우팅) 실습 파일 보유
+  - ReplicaSet 기반 다중 Pod 관리 실습 완료
+  - Ingress(host/path 기반 라우팅) 실습 완료
+- `ordersystrem/k8s/k8s-ordersystem`
+  - 주문 시스템 백엔드 Deployment/Service 구성 완료
+  - Redis 연동용 Deployment/Service 구성 완료
+  - Ingress 및 HTTPS(TLS) 적용 실습 완료
+  - HPA 리소스 작성 및 기본 오토스케일링 구성 완료
+- `ordersystrem/k8s/k8s-argocd`
+  - Argo CD Application, Service, Ingress, Certificate 구성 완료
+  - GitOps 기반 애플리케이션 배포 경로 연결 확인
+- `ordersystrem/k8s/k8s-monitoring`
+  - Prometheus ConfigMap/RBAC/Deployment/Service 구성 완료
+  - Grafana Deployment/Service 구성 완료
+  - node-exporter DaemonSet 구성 완료
+  - 모니터링 스택(Prometheus + Grafana + node-exporter)까지 작업 완료
+- `msa/k8s`, `msa/*/k8s`
+  - Redis, Zookeeper, Kafka 등 공통 인프라 리소스 구성 완료
+  - API Gateway, Member, Product, Ordering 서비스별 Deployment/Service 구성 완료
+  - Ingress 및 HTTPS 리소스 파일 보유
+
+현재 기준으로는 `k8s_basic` 기초 실습부터 `ordersystrem`의 백엔드/Argo CD/monitoring 영역까지 작업이 진행된 상태이며, monitoring 관련 리소스도 매니페스트 작성 기준 완료 상태입니다.
 
 ## 10) 최근 이슈/수정 요약 (2026-03-15)
 ### Argo CD ApplicationSet Controller CrashLoopBackOff
